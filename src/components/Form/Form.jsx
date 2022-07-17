@@ -166,7 +166,7 @@ function FORM() {
     
 
     return (
-        <div className="mx-auto" style={{width: '40%', marginTop:'100px'}}>
+        <div className="mx-auto" style={{width: '80%', marginTop:'100px'}}>
 
             <Form noValidate validated={validated}  style={{marginBottom: '50px'}}>
                 <Row className="mb-3">
