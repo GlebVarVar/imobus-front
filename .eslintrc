@@ -1,0 +1,28 @@
+{
+
+    "extends": [
+        "react-app",
+        "react-app/jest"
+    ],
+    "rules": {
+        "no-console": "warn", // Подстветка console.log
+        "prefer-const": "warn", // Использование const вместо let и var
+
+        "quotes": ["warn", "single"], // Одиночные кавычки в импортах и тд
+        "jsx-quotes": ["warn", "prefer-double"], // Двойные кавычки в JSX
+
+        "indent": ["warn", 4], // Количетсво пробелов в строке
+        "max-len": ["warn", 120], // Максимальная длина строки
+        "comma-dangle": ["warn", "always-multiline"], // Пробел после запятой в массивах и тд
+        "semi":["warn", "always"], // Точки с запятой в конце строки
+
+        "import/order":["warn", {
+            "groups": 
+            ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"] ,
+            "newlines-between": "always-and-inside-groups" // Пробел между группами импортов
+        }] // Порядок импортов
+
+
+    }
+      
+}

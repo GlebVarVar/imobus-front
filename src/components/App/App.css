@@ -1,0 +1,31 @@
+img {
+    width: 50px;
+    height: auto;
+}
+/* sm */
+@media (min-width: 768px) {
+    img {
+        width: 75px;
+    }
+}
+/* md */
+@media (min-width: 992px) {
+    img {
+        width: 100px;
+    }
+}
+/* lg */
+@media (min-width: 1200px) {
+    img {
+        width: 125px;
+    }
+}
+
+
+li {
+    list-style-type: none; /* Убираем маркеры */
+   }
+   ul {
+    margin-left: 0; /* Отступ слева в браузере IE и Opera */
+    padding-left: 0; /* Отступ слева в браузере Firefox, Safari, Chrome */
+   }
