@@ -1,16 +1,15 @@
 import Accordion from 'react-bootstrap/Accordion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 
 import { getData, postData } from '../../services/API';
 
 import Messenger from './FormComponents/Messenger';
-import ImportData from './FormComponents/ImportData';
 
+// default values for messengerList
 const messengerListDefaultValues = [
     {
         id: 1,
@@ -106,8 +105,6 @@ function simulateNetworkRequest() {
     return new Promise((resolve) => setTimeout(resolve, 1000));
 }
   
-
-
 function FORM() {
 
     const [messengerList, setMessengerList] = useState(messengerListDefaultValues);
@@ -124,15 +121,20 @@ function FORM() {
         if (userName.length > 0) {
             setLoading(true);
             if (type == 'import') {
+                // импорт данных
                 const responce = await getData(userName);
+
                 responce.data !== null &&
                 responce.data.Messengers.map((messenger, index) => {
                     const newMessengerList = [...messengerList];
+
+                    const {messengerName, text, Buttons, inline} = messenger;
                     for (let i = 0; i < newMessengerList.length; i++) {
-                        if (newMessengerList[i].name == messenger.messengerName) {
-                            newMessengerList[i].text = messenger.text;
-                            newMessengerList[i].buttonsCount = messenger.Buttons.length;
-                            newMessengerList[i].viewType = messenger.inline;
+                        
+                        if (newMessengerList[i].name == messengerName) {
+                            newMessengerList[i].text = text;
+                            newMessengerList[i].buttonsCount = Buttons.length;
+                            newMessengerList[i].viewType = inline;
 
                             messenger.Buttons.map((button, index) => {
                                 const {link, text, number} = button;
@@ -152,23 +154,20 @@ function FORM() {
                 
             } else {
                 const responce = await postData(userName, messengerList);
-                console.log(responce.data);
             }
             await simulateNetworkRequest();
             setLoading(false);
         } 
-
-        
     };
 
-    
   
-    
 
     return (
         <div className="mx-auto" style={{width: '40%', marginTop:'100px'}}>
 
             <Form noValidate validated={validated}  style={{marginBottom: '50px'}}>
+
+                {/* поле ввода имени пользователя */}
                 <Row className="mb-3">
                     <Form.Group as={Col} md="4" controlId="validationCustom01">
                         <Form.Label>Username</Form.Label>
@@ -184,22 +183,21 @@ function FORM() {
                         />
                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                     </Form.Group>
-                    
-                
-
                 </Row>
+
+                {/* импорт данных из базы данных */}
                 <Button disabled={isLoading} onClick = {(e) => save(e, 'import')}>
                     {
                         isLoading ?  'Please wait…'  :  'Import data'
                     }
                 </Button>
-                {/* <LoadingButton buttonText = {[ 'Loading…',  'Import data']} /> */}
+                
 
                 <Accordion defaultActiveKey="0"  >
                     <Messenger messengerList={messengerList} setMessengerList = {setMessengerList}/>
                 </Accordion>
 
-                {/* <LoadingButton buttonText = {[ 'Saving…',  'Save data']} /> */}
+                {/* сохранение данных в базу данных */}
                 <Button  disabled={isLoading} onClick = {(e) => save(e, 'save')}>
                     {
                         isLoading ?  'Please wait…'  :  'Save data'

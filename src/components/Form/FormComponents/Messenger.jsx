@@ -32,6 +32,68 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
     }
 
 
+
+
+    function addButtonOnClick(e) {
+        e.preventDefault();
+        
+        const newMessengerList = [...messengerList];
+        newMessengerList[index].buttons.push({
+            id: messenger.buttons.length + 1,
+            text: '',
+            link: false,
+        });
+        setMessengerList(newMessengerList);
+        check(messenger);
+    }
+
+
+    function textAreaOnChange(e) {
+        const newMessengerList = [...messengerList];
+        newMessengerList[index].text = e.target.value.substring(0, messenger.characterLimit);
+        setMessengerList(newMessengerList);
+    }
+
+
+    function switcherOnChange() {
+        const newMessengerList = [...messengerList];
+        const {viewType, maxButtonsCountInline, buttons, maxButtonsCountStandard} = newMessengerList[index];
+
+        newMessengerList[index].viewType = !viewType;
+        if (newMessengerList[index].viewType) {
+            if (newMessengerList[index].buttons.length > maxButtonsCountInline) {
+                newMessengerList[index].buttons = buttons.slice(0, maxButtonsCountInline);
+            }
+        } else {
+            if (newMessengerList[index].buttons.length > maxButtonsCountStandard) {
+                newMessengerList[index].buttons = buttons.slice(0, maxButtonsCountStandard);
+            }
+        }
+        setMessengerList(newMessengerList);
+        check(messenger);
+    }
+
+
+    function buttonTextOnChange(value, num) {
+        const newMessengerList = [...messengerList];
+        const {viewType, maxButtonTextLengthInline, maxButtonTextLengthStandard} = messenger;
+        viewType ? 
+            newMessengerList[index].buttons[num].text = value.substring(0, maxButtonTextLengthInline) 
+            : newMessengerList[index].buttons[num].text = value.substring(0, maxButtonTextLengthStandard);
+
+        setMessengerList(newMessengerList);
+    }
+
+
+    function linkCheckboxOnChange(num) {
+        const newMessengerList = [...messengerList];
+        newMessengerList[index].buttons[num].link = !newMessengerList[index].buttons[num].link; 
+        
+
+        setMessengerList(newMessengerList);
+    }
+
+
     return (
         
         <Accordion.Item eventKey={messenger.id} style = {{marginTop: '25px'}}>
@@ -42,21 +104,7 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                     <Form.Check
                         checked = {messenger.viewType}
                         // state change handler for viewType
-                        onChange = {() => {
-                            const newMessengerList = [...messengerList];
-                            newMessengerList[index].viewType = !newMessengerList[index].viewType;
-                            if (newMessengerList[index].viewType) {
-                                if (newMessengerList[index].buttons.length > newMessengerList[index].maxButtonsCountInline) {
-                                    newMessengerList[index].buttons = newMessengerList[index].buttons.slice(0, newMessengerList[index].maxButtonsCountInline);
-                                }
-                            } else {
-                                if (newMessengerList[index].buttons.length > newMessengerList[index].maxButtonsCountStandard) {
-                                    newMessengerList[index].buttons = newMessengerList[index].buttons.slice(0, newMessengerList[index].maxButtonsCountStandard);
-                                }
-                            }
-                            setMessengerList(newMessengerList);
-                            check(messenger);
-                        }} 
+                        onChange = {switcherOnChange} 
                         type="switch"
                         id="custom-switch"
                         label="inline-отображение"
@@ -72,15 +120,14 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                                     as="textarea"  
                                     rows={3} 
                                     value={messenger.text} 
-                                    onChange={(e) => {
-                                        const newMessengerList = [...messengerList];
-                                        newMessengerList[index].text = e.target.value.substring(0, messenger.characterLimit);
-                                        setMessengerList(newMessengerList);
-                                    }} 
+                                    onChange={(e) => textAreaOnChange(e)} 
                                     isInvalid={(messenger.text.length > messenger.characterLimit)} 
                                 />
 
-                                <Badge className="mt-3" bg={`${messenger.text.length > messenger.characterLimit ? 'danger' : 'primary'}`}>
+                                <Badge 
+                                    className = "mt-3" 
+                                    bg = {`${messenger.text.length > messenger.characterLimit ? 'danger' : 'primary'}`}>
+
                                     {messenger.text.length}/{messenger.characterLimit}
                                 </Badge>
                             </Form.Group>
@@ -88,38 +135,30 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                 }
                 {/* поле для кнопок */}
                 {
-                    messenger.buttons && (messenger.maxButtonsCountStandard || (messenger.viewType && messenger.maxButtonTextLengthInline)) &&
+                    messenger.buttons && 
+                    (messenger.maxButtonsCountStandard || 
+                    (messenger.viewType && messenger.maxButtonTextLengthInline)) &&
+
                     <Row style = {{marginTop: '25px'}}>
                         <Row style = {{marginBottom: '25px'}}>
                             <Col>
                                 <Button 
                                     variant="primary"
-                                    disabled={disabled}
+                                    disabled={disabled}    
+                                    onClick={(e) => addButtonOnClick(e)}>
                                         
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        
-                                        const newMessengerList = [...messengerList];
-                                        newMessengerList[index].buttons.push({
-                                            id: messenger.buttons.length + 1,
-                                            text: '',
-                                            link: false,
-                                        });
-                                        setMessengerList(newMessengerList);
-                                        check(messenger);
-                                        console.log(newMessengerList[index].buttons);
-                                    }}>
                                     Add button
                                 </Button>
                             </Col>
                             <Col>
-                                {/* <Button variant="primary" className="float-end" disabled>
-                                    {messenger.viewType ? messenger.maxButtonsCountInline : messenger.maxButtonsCountStandard} available
-                                </Button> */}
-                                
-                                
+
                                 <Badge className="float-end">
-                                    {messenger.viewType ? messenger.maxButtonsCountInline - messenger.buttons.length : messenger.maxButtonsCountStandard - messenger.buttons.length} available
+                                    {
+                                        messenger.viewType ? 
+                                            messenger.maxButtonsCountInline - messenger.buttons.length : 
+                                            messenger.maxButtonsCountStandard - messenger.buttons.length
+                                    } 
+                                    available
                                 </Badge>
             
                             </Col>
@@ -127,7 +166,6 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                         {
                             
                             messenger.buttons.map((button, num) => {
-                                console.log(button);
                                 return(
                                     <Row style = {{marginTop: '25px'}} key={num}>
                                         <Col>
@@ -136,11 +174,7 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                                                 <Form.Control 
                                                     placeholder="Text here!" 
                                                     value={button.text}
-                                                    onChange={(e) => {
-                                                        const newMessengerList = [...messengerList];
-                                                        messenger.viewType ? newMessengerList[index].buttons[num].text = e.target.value.substring(0, messenger.maxButtonTextLengthInline) : newMessengerList[index].buttons[num].text = e.target.value.substring(0, messenger.maxButtonTextLengthStandard);
-                                                        setMessengerList(newMessengerList);
-                                                    }}/>
+                                                    onChange={(e) => {buttonTextOnChange(e.target.value, num)}}/>
                                             </Form.Group>
                                             <Badge>
                                                 {
@@ -156,15 +190,10 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                                             <Col xs lg="2" >
                                                 
                                                 <Form.Check
-                                                    onClick={(e) => {
-                                                        const newMessengerList = [...messengerList];
-                                                         newMessengerList[index].buttons[num].link = !newMessengerList[index].buttons[num].link; 
-                                                        ;
-
-                                                        setMessengerList(newMessengerList);
-                                                    }}
+                                                    onChange={(num) => {linkCheckboxOnChange(num)}}
                                                     className="float-end"
-                                                    style={{position: 'relative',
+                                                    style={{
+                                                        position: 'relative',
                                                         top: '50%'}}
                                                     type="checkbox"
                                                     checked={button.link}
@@ -197,16 +226,16 @@ const Messengers = ({ messengerList = [], setMessengerList }) => {
     return (
         <Reorder.Group axys = "y" values={messengerList} onReorder={setMessengerList}>
             {
-                
                 messengerList.map((messenger, index) => {
                     return (
                         <Reorder.Item value={messenger} key={index}>
-                            <MessengerItem messenger={messenger} index={index} messengerList={messengerList} setMessengerList={setMessengerList}/>
+                            <MessengerItem 
+                                messenger={messenger} 
+                                index={index} 
+                                messengerList={messengerList} 
+                                setMessengerList={setMessengerList}/>
                         </Reorder.Item>
-                    );
-                    
-                    
-                    
+                    );  
                 })
             }
         </Reorder.Group>

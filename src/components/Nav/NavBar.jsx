@@ -8,7 +8,7 @@ const NavBar = () => {
     return (
         <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
             <Container>
-                <Navbar.Brand href="#home">
+                <Navbar.Brand>
                     <img src = {FromniLogo} className="img-fluid" alt="Fromni Logo" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
