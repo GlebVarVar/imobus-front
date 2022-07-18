@@ -174,7 +174,7 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                                                 <Form.Control 
                                                     placeholder="Text here!" 
                                                     value={button.text}
-                                                    onChange={(e) => {buttonTextOnChange(e.target.value, num)}}/>
+                                                    onChange={(e) => {buttonTextOnChange(e.target.value, num);}}/>
                                             </Form.Group>
                                             <Badge>
                                                 {
@@ -190,7 +190,7 @@ const MessengerItem = ({messenger, index, setMessengerList, messengerList}) => {
                                             <Col xs lg="2" >
                                                 
                                                 <Form.Check
-                                                    onChange={(num) => {linkCheckboxOnChange(num)}}
+                                                    onChange={(num) => {linkCheckboxOnChange(num);}}
                                                     className="float-end"
                                                     style={{
                                                         position: 'relative',

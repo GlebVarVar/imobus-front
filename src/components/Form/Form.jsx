@@ -150,13 +150,16 @@ function FORM() {
                     setMessengerList(newMessengerList);
                 });
 
-
+                await simulateNetworkRequest();
+                setLoading(false);
                 
             } else {
+                
                 const responce = await postData(userName, messengerList);
+                await simulateNetworkRequest();
+                setLoading(false);
             }
-            await simulateNetworkRequest();
-            setLoading(false);
+            
         } 
     };
 
